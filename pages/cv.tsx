@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import Head from "next/head";
 
 export default function CV() {
@@ -184,16 +186,16 @@ export default function CV() {
             <p className="text-xl font-semibold mt-4">Hobbies</p>
             <ul className="space-y-2 text-slate-300">
               <li>
-                <p className="font-semibold"><i className="fa-solid fa-arrow-right"></i> Travel & Explore</p>
+                <p className="font-semibold"><FontAwesomeIcon icon={faArrowRight} /> Travel & Explore</p>
               </li>
               <li>
-                <p className="font-semibold"><i className="fa-solid fa-arrow-right"></i> Programming</p>
+                <p className="font-semibold"><FontAwesomeIcon icon={faArrowRight} /> Programming</p>
               </li>
               <li>
-                <p className="font-semibold"><i className="fa-solid fa-arrow-right"></i> Learn new things</p>
+                <p className="font-semibold"><FontAwesomeIcon icon={faArrowRight} />  Learn new things</p>
               </li>
               <li>
-                <p className="font-semibold"><i className="fa-solid fa-arrow-right"></i> Spend time with friends</p>
+                <p className="font-semibold"><FontAwesomeIcon icon={faArrowRight} />  Spend time with friends</p>
               </li>
             </ul>
 		</>
