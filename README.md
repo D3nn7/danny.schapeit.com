@@ -2,11 +2,26 @@
 [![❤️ Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#white)](https://github.com/sponsors/D3nn7)
 
 
-This website is build with [TailwindCSS](https://tailwindcss.com) and [Fontawesome Free](fontawesome.com) It's a static website, so no backend is needed.
+This website is build with [Next.js](https://nextjs.org), [TailwindCSS](https://tailwindcss.com) and [Fontawesome Free](fontawesome.com).
 
 ### Development
-So you not need to restart the TailwindCSS build process every time you change something, you can use the watch flag so ton every change the css file will be rebuild.
+To start development server, run the following command:
 
 ```shell
-npx tailwindcss -i ./src/index.css -o ./dist/output.css --watch
+npm run dev
 ```
+
+### Production
+For the reason that I will run this wesbsite using a Docker container, I provided a `Dockerfile`, so you can easily setup a container with the content of this website.
+
+Build your container: 
+```shell
+docker build -t danny-schapeit-com .
+```
+
+Run your container: 
+```shell
+docker run -d -p 3000:3000 --name danny-schapeit-com danny-schapeit-com
+```
+
+Access site on [IP/Domain]:3000
