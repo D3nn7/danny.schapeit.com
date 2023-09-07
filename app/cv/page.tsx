@@ -22,7 +22,7 @@ export default function CV() {
                 <h4 className='font-high-summit text-2xl text-silver'>Experince</h4>
                 <ol className="relative border-l border-gray-400 space-y-4">      
                     <TimelineItem title="SPEDION GmbH" time="2023 - Present" extraInfos="Software Developer" />           
-                    <TimelineItem title="em-BIT GmbH" time="2023 - Present" extraInfos="Mobile device setup" />
+                    <TimelineItem title="em-BIT GmbH" time="2020 - Present" extraInfos="Mobile device setup" />
                     <TimelineItem title="Slynite" time="2019 - Present" extraInfos="Founder & CEO" />
                     <TimelineItem title="SPEDION GmbH" time="2020 - 2023 (3 yrs)" extraInfos="Apprenticeship as IT specialist for application development" />
                     <TimelineItem title="REWE Group (Rewe Markt Bierwirth OHG)" time="2019 - 2020 (2 yrs)" extraInfos="Temporary help (mini job) in sales area" />
