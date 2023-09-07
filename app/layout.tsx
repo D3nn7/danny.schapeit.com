@@ -1,3 +1,4 @@
+import StreamBanner from '@/components/streamBanner'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
@@ -37,10 +38,11 @@ export default function RootLayout({
 				<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#1e293b"/>
 			</head>
 			<body className={roboto.className}>
-				<div className='flex justify-center flex-col max-h-[64rem]'>
-					<Image src={'/background.jpg'} width={1920} height={1080} alt='Background' />
+				<div className='flex justify-center flex-col max-h-[64rem] min-h-screen'>
+					<Image src={'/background.jpg'} width={1920} height={600} alt='Background' className='max-h-[300px] 2xl:max-h-[64rem] self-center' />
 					<div className='flex min-h-screen flex-col items-center px-6 lg:px-5 xl:px-36 2xl:px-64 bg-black text-gray-300'>
 						<Link href={'https://holopin.io/collect/clfh7d7uc32160fjmhvwvnfvx'} target='_blank'><Image src={'/logo.png'} width={400} height={400} alt="Logo" className='-mt-28 md:-mt-32' /></Link>
+						{process.env.NEXT_PUBLIC_TWITCH_LIVE === 'true' ? <StreamBanner /> : null}
 						<h1 className='font-high-summit text-4xl md:text-6xl text-silver mb-4'>Danny Schapeit</h1>
 						<h2 className='text-center md:text-xl mb-8'>Developer with focus on privacy and open source.</h2>
 						{children} 
