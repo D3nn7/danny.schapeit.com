@@ -7,7 +7,7 @@ export default function SocialMedia() {
             <div className='flex'>
                 <SocialLink name={'Github'} link={'https://github.com/d3nn7'} image={'/icons/github-512.png'} />
                 <SocialLink name={'Instagram'} link={'https://instagram.com/d3nn7.me'} image={'/icons/instagram-512.png'} />
-                <SocialLink name={'Twitch'} link={'https://twitch.tv/dannyschapeit'} image={'/icons/twitch-512.png'} />
+                <SocialLink name={'Twitch'} link={'https://www.twitch.tv/dannyschapeit'} image={'/icons/twitch-512.png'} />
                 <SocialLink name={'Dev.to'} link={'https://dev.to/d3nn7'} image={'/icons/dev.to-512.png'} />
                 <SocialLink name={'LinkedIn'} link={'https://www.linkedin.com/in/danny-schapeit-a23b5a232'} image={'/icons/linkedin-512.png'} />
                 <SocialLink name={'Xing'} link={'https://www.xing.com/profile/DannyTobias_Schapeit'} image={'/icons/xing-512.png'} />
