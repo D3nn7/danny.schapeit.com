@@ -1,8 +1,6 @@
 # Website from Danny Schapeit (D3nn7)
-[![❤️ Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#white)](https://github.com/sponsors/D3nn7)
 
-
-This website is build with [Next.js](https://nextjs.org), [TailwindCSS](https://tailwindcss.com) and [Fontawesome Free](fontawesome.com).
+This website is build with [Next.js](https://nextjs.org), [TailwindCSS](https://tailwindcss.com) and [Heroicons](https://heroicons.com).
 
 ### Development
 To start development server, run the following command:
