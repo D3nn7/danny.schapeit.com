@@ -10,7 +10,7 @@ export default function Home() {
 		<div className='justify-center text-center md:space-x-4'>
 			<h3 className='font-high-summit text-4xl text-silver'>About</h3>
 			<p className='text-left md:px-36'>
-				I'm Danny Schapeit (or D3nn7) a developer from Germany with a preference for open source and privacy protected software.
+				I&apos;m Danny Schapeit (or D3nn7) a developer from Germany with a preference for open source and privacy protected software.
 				Most of all I like to develop projects for my company <Link href={'https://slynite.com'} className='underline'>Slynite</Link>.
 				My skills and knowledge can be found in my <Link href={'/cv'} className='underline'>CV</Link>. I mainly work on my Macbook, which is why I have advanced Unix knowledge.
 				In my free time I like to explore the world, play games or steam sometimes on <Link href={'https://www.twitch.tv/dannytobias'} className='underline'>Twitch</Link>. I am also an absolute cat lover and I like to play table tennis. Video/Photo editing is also one of my hobbies (I have good knowledge of some Adobe CC products).
