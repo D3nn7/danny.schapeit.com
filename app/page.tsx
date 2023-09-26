@@ -20,6 +20,7 @@ export default function Home() {
 				<Link href={'/cv'} className='flex hover:underline'>CV <ChevronRightIcon className='w-6 h-6' /> </Link>
 				<Link href={'mailto:danny@schapeit.com'} className='flex hover:underline'>Drop a mail <ChevronRightIcon className='w-6 h-6' /></Link>
 				<Link href={'https://dev.to/d3nn7'} target='_blank' className='flex hover:underline'>Blog (Dev.to) <ChevronRightIcon className='w-6 h-6' /></Link>
+				<Link href={'https://bsky.app/profile/schapeit.com'} target='_blank' className='flex hover:underline'>Bluesky <ChevronRightIcon className='w-6 h-6' /></Link>
 			</div>
 		</div>
 
