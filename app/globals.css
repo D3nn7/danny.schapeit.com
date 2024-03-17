@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "High Summit";
-  src: url("/high-summit.ttf");
-}
-
 body {
   background: #131313;
 }
@@ -14,10 +9,6 @@ body {
 .noise {
   background: rgb(13, 13, 13);
   background-image: url(/noise.svg);
-}
-
-.font-high-summit {
-  font-family: High Summit, system-ui, sans-serif;
 }
 
 ::-webkit-scrollbar {

@@ -3,9 +3,9 @@ import SocialLink from "./socialLink";
 
 export default function SocialMedia() {
   return (
-    <div className="justify-center text-center space-x-4 pb-12">
+    <div className="justify-center text-center pl-2 pr-2">
       <Image
-        className="mx-auto"
+        className="mx-auto h-[35px] md:h-auto w-[200px] md:w-auto"
         src="/text/socials-white.png"
         width={300}
         height={70}
@@ -36,11 +36,6 @@ export default function SocialMedia() {
           name={"LinkedIn"}
           link={"https://www.linkedin.com/in/danny-schapeit-a23b5a232"}
           image={"/icons/linkedin-512.png"}
-        />
-        <SocialLink
-          name={"Xing"}
-          link={"https://www.xing.com/profile/DannyTobias_Schapeit"}
-          image={"/icons/xing-512.png"}
         />
       </div>
     </div>
