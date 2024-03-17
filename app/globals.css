@@ -2,17 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "High Summit";
-  src: url("/high-summit.ttf");
-}
-
 body {
   background: #131313;
 }
 
-.font-high-summit {
-  font-family: High Summit, system-ui, sans-serif;
+.noise {
+  background: rgb(13, 13, 13);
+  background-image: url(/noise.svg);
 }
 
 ::-webkit-scrollbar {
