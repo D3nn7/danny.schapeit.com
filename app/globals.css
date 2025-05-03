@@ -1,14 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@font-face {
+  font-family: "High Summit";
+  src: url("/high-summit.ttf");
+}
 
 body {
   background: #131313;
 }
 
-.noise {
-  background: rgb(13, 13, 13);
-  background-image: url(/noise.svg);
+.font-high-summit {
+  font-family: High Summit, system-ui, sans-serif;
 }
 
 ::-webkit-scrollbar {
