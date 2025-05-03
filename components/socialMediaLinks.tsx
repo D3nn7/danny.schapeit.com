@@ -1,16 +1,9 @@
-import Image from "next/image";
 import SocialLink from "./socialLink";
 
 export default function SocialMedia() {
   return (
-    <div className="justify-center text-center pl-2 pr-2">
-      <Image
-        className="mx-auto h-[35px] md:h-auto w-[200px] md:w-auto"
-        src="/text/socials-white.png"
-        width={300}
-        height={70}
-        alt="Who"
-      />
+    <div className="justify-center text-center space-x-4 pb-12">
+      <h3 className="font-high-summit text-4xl text-silver">Socials</h3>
       <div className="flex">
         <SocialLink
           name={"Github"}
@@ -21,11 +14,6 @@ export default function SocialMedia() {
           name={"Instagram"}
           link={"https://instagram.com/d3nn7.me"}
           image={"/icons/instagram-512.png"}
-        />
-        <SocialLink
-          name={"Twitch"}
-          link={"https://www.twitch.tv/dannyschapeit"}
-          image={"/icons/twitch-512.png"}
         />
         <SocialLink
           name={"Dev.to"}
