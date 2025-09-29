@@ -12,7 +12,7 @@ export default function SocialMedia() {
         />
         <SocialLink
           name={"Instagram"}
-          link={"https://instagram.com/d3nn7.me"}
+          link={"https://instagram.com/glaubedanny"}
           image={"/icons/instagram-512.png"}
         />
         <SocialLink
