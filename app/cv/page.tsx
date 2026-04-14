@@ -79,7 +79,7 @@ export default function CV() {
         </h4>
         <ol className="relative mt-3 border-l border-gray-400 space-y-4">
           <TimelineItem
-            title="SPEDION App Suite"
+            title="SPEDION App"
             time="Android · Produktivsystem"
             extraInfos="Feature-Entwicklung, Bugfixing und UI-Verbesserungen inklusive Dark Mode im Hauptprodukt."
           />
@@ -94,7 +94,7 @@ export default function CV() {
             extraInfos="Entwicklung zentraler Features mit GeniusSDK und UI-Umsetzung via Compose."
           />
           <TimelineItem
-            title="SPEDION SEPP"
+            title="Monitoring Tool"
             time="Next.js + C# API"
             extraInfos="Monitoring-Oberfläche zur Visualisierung von Nagios-Meldungen."
           />
