@@ -15,7 +15,7 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: "Hey I'm Danny 👋🏻",
   description:
-    "Hey! I'm Danny, a software developer from Germany with a preference for open-source and privacy-protected software. Learn more about me on my website.",
+    "Hey! Ich bin Danny, ein Software Entwickler aus Deutschland.",
   keywords:
     "developer, software engineer, open source, open source developer, privacy-focused, geek, german developer, d3nn7, slynite, danny schapeit, danny-tobias schapeit",
   robots: "index, follow",
@@ -86,7 +86,7 @@ export default function RootLayout({
               Danny Schapeit
             </h1>
             <h2 className="text-center md:text-xl mb-8">
-              Developer with focus on privacy and open source.
+              Software Entwickler
             </h2>
             {children}
           </div>
