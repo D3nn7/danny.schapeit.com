@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import {
   certifications,
@@ -33,6 +33,19 @@ type DesktopPortfolioProps = {
   initialWindow?: WindowId;
 };
 
+type ContextMenuState =
+  | {
+      kind: "desktop";
+      x: number;
+      y: number;
+    }
+  | {
+      kind: "window";
+      target: WindowId;
+      x: number;
+      y: number;
+    };
+
 const DESKTOP_BREAKPOINT = 900;
 
 const initialWindows: Record<WindowId, WindowState> = {
@@ -46,13 +59,13 @@ const initialWindows: Record<WindowId, WindowState> = {
 };
 
 const initialPositions: Record<WindowId, WindowPosition> = {
-  about: { top: 20, left: 0, width: 780 },
-  cv: { top: 330, left: 46, width: 760 },
-  skills: { top: 785, left: 122, width: 640 },
-  projects: { top: 1180, left: 38, width: 735 },
-  console: { top: 1565, left: 142, width: 700 },
-  guestbook: { top: 1905, left: 84, width: 650 },
-  contact: { top: 2285, left: 24, width: 720 },
+  about: { top: 18, left: 0, width: 520 },
+  cv: { top: 42, left: 420, width: 480 },
+  skills: { top: 258, left: 54, width: 410 },
+  projects: { top: 282, left: 490, width: 430 },
+  console: { top: 120, left: 860, width: 360 },
+  guestbook: { top: 430, left: 120, width: 360 },
+  contact: { top: 420, left: 540, width: 400 },
 };
 
 const icons: Record<WindowId, string> = {
@@ -84,9 +97,9 @@ const guestbookEntries = [
 ];
 
 const clippyMessages = [
-  "Es sieht so aus, als wuerdest du mein Portfolio lesen. Brauchst du Hilfe beim Navigieren?",
-  "Die Fenster kannst du jetzt auf Desktop wirklich anklicken, minimieren und verschieben.",
-  "Das Terminal versteht help, about, skills, contact, coffee, matrix, clear und exit.",
+  "Willkommen auf dem Desktop. Mit den Icons links springst du direkt in die einzelnen Bereiche.",
+  "Im CV-Fenster findest du Erfahrung, Ausbildung und Zertifikate in eigenen Tabs.",
+  "Das Terminal kennt ein paar kleine Kommandos. help ist ein guter Start.",
 ];
 
 const asciiBanner = String.raw`
@@ -99,6 +112,7 @@ const asciiBanner = String.raw`
 `;
 
 export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPortfolioProps) {
+  const windowRefs = useRef<Partial<Record<WindowId, HTMLElement | null>>>({});
   const [windows, setWindows] = useState(initialWindows);
   const [positions, setPositions] = useState(initialPositions);
   const [windowOrder, setWindowOrder] = useState<WindowId[]>(["about", "cv", "skills", "projects", "console", "guestbook", "contact"]);
@@ -108,6 +122,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
   const [dialogMessage, setDialogMessage] = useState<string | null>(null);
   const [activeCvTab, setActiveCvTab] = useState<CvTab>("experience");
   const [consoleInput, setConsoleInput] = useState("");
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [consoleLines, setConsoleLines] = useState<string[]>([
     "Microsoft Windows [Version 98.2026]",
     "(c) Danny Schapeit. Keine Rechte vorbehalten. ¯\\_(ツ)_/¯",
@@ -126,8 +141,106 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
   }, []);
 
   useEffect(() => {
+    if (!isDesktop) {
+      return;
+    }
+
+    const distributeWindows = () => {
+      const desktopLeftOffset = 120;
+      const availableWidth = Math.max(window.innerWidth - desktopLeftOffset - 32, 900);
+      const availableHeight = Math.max(window.innerHeight - 120, 620);
+      const leftEdge = Math.round(availableWidth * 0.01);
+      const centerLane = Math.round(availableWidth * 0.37);
+      const rightLane = Math.round(availableWidth * 0.73);
+      const topRow = Math.round(availableHeight * 0.02);
+      const middleRow = Math.round(availableHeight * 0.34);
+      const lowerRow = Math.round(availableHeight * 0.63);
+
+      const clampLeft = (left: number, width: number) =>
+        Math.max(0, Math.min(left, Math.max(availableWidth - width, 0)));
+      const clampTop = (top: number, height = 320) =>
+        Math.max(0, Math.min(top, Math.max(availableHeight - height, 0)));
+
+      const aboutWidth = Math.min(500, Math.max(400, Math.round(availableWidth * 0.28)));
+      const cvWidth = Math.min(520, Math.max(430, Math.round(availableWidth * 0.3)));
+      const skillsWidth = Math.min(350, Math.max(300, Math.round(availableWidth * 0.2)));
+      const projectsWidth = Math.min(430, Math.max(340, Math.round(availableWidth * 0.25)));
+      const consoleWidth = Math.min(360, Math.max(300, Math.round(availableWidth * 0.21)));
+      const guestbookWidth = Math.min(350, Math.max(290, Math.round(availableWidth * 0.2)));
+      const contactWidth = Math.min(390, Math.max(320, Math.round(availableWidth * 0.22)));
+
+      setPositions({
+        about: {
+          width: aboutWidth,
+          left: clampLeft(leftEdge, aboutWidth),
+          top: clampTop(topRow, 360),
+        },
+        cv: {
+          width: cvWidth,
+          left: clampLeft(centerLane, cvWidth),
+          top: clampTop(Math.round(availableHeight * 0.06), 420),
+        },
+        skills: {
+          width: skillsWidth,
+          left: clampLeft(rightLane, skillsWidth),
+          top: clampTop(topRow, 300),
+        },
+        projects: {
+          width: projectsWidth,
+          left: clampLeft(leftEdge + Math.round(availableWidth * 0.1), projectsWidth),
+          top: clampTop(middleRow, 340),
+        },
+        console: {
+          width: consoleWidth,
+          left: clampLeft(centerLane + Math.round(availableWidth * 0.12), consoleWidth),
+          top: clampTop(middleRow - Math.round(availableHeight * 0.08), 300),
+        },
+        guestbook: {
+          width: guestbookWidth,
+          left: clampLeft(rightLane, guestbookWidth),
+          top: clampTop(middleRow + Math.round(availableHeight * 0.1), 300),
+        },
+        contact: {
+          width: contactWidth,
+          left: clampLeft(centerLane - Math.round(availableWidth * 0.08), contactWidth),
+          top: clampTop(lowerRow, 320),
+        },
+      });
+    };
+
+    distributeWindows();
+    window.addEventListener("resize", distributeWindows);
+    return () => window.removeEventListener("resize", distributeWindows);
+  }, [isDesktop]);
+
+  useEffect(() => {
     focusWindow(initialWindow);
   }, [initialWindow]);
+
+  useEffect(() => {
+    const applyHashTarget = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (!hash) {
+        return;
+      }
+
+      const target = hash as WindowId;
+      if (!Object.keys(initialWindows).includes(target)) {
+        return;
+      }
+
+      focusWindow(target);
+      if (!isDesktop) {
+        window.requestAnimationFrame(() => {
+          windowRefs.current[target]?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    };
+
+    applyHashTarget();
+    window.addEventListener("hashchange", applyHashTarget);
+    return () => window.removeEventListener("hashchange", applyHashTarget);
+  }, [isDesktop]);
 
   useEffect(() => {
     console.clear();
@@ -153,14 +266,6 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
   const taskbarItems = useMemo(() => windowOrder.filter((id) => windows[id].open), [windowOrder, windows]);
 
-  const desktopHeight = useMemo(() => {
-    const bottom = windowOrder.reduce((maxBottom, id) => {
-      if (!windows[id].open || windows[id].minimized) return maxBottom;
-      return Math.max(maxBottom, positions[id].top + 420);
-    }, 0);
-    return Math.max(bottom + 180, 2850);
-  }, [positions, windowOrder, windows]);
-
   function focusWindow(id: WindowId) {
     setWindows((current) => ({ ...current, [id]: { open: true, minimized: false } }));
     setWindowOrder((current) => [...current.filter((entry) => entry !== id), id]);
@@ -184,11 +289,26 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
       return;
     }
     focusWindow(id);
+    window.location.hash = id;
     setStartOpen(false);
+    setContextMenu(null);
+  }
+
+  function navigateToWindow(id: WindowId) {
+    focusWindow(id);
+    if (window.location.hash !== `#${id}`) {
+      window.location.hash = id;
+    }
+    if (!isDesktop) {
+      window.requestAnimationFrame(() => {
+        windowRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
   }
 
   async function runMenuAction(action: MenuAction) {
-    if (action.type === "focus") return focusWindow(action.target);
+    setContextMenu(null);
+    if (action.type === "focus") return navigateToWindow(action.target);
     if (action.type === "minimize") return minimizeWindow(action.target);
     if (action.type === "close") return closeWindow(action.target);
     if (action.type === "link") {
@@ -241,6 +361,85 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
     setConsoleLines((current) => [...current, `C:\\Users\\Danny> ${command}`, ...output]);
   }
 
+  function openContextMenu(
+    event: React.MouseEvent<HTMLElement>,
+    menu: ContextMenuState,
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+    setActiveMenu(null);
+    setStartOpen(false);
+    setContextMenu(menu);
+  }
+
+  function renderContextMenu() {
+    if (!contextMenu) {
+      return null;
+    }
+
+    const menuWidth = 196;
+    const menuHeight = contextMenu.kind === "desktop" ? 136 : 104;
+    const left = Math.max(8, Math.min(contextMenu.x, window.innerWidth - menuWidth - 8));
+    const top = Math.max(8, Math.min(contextMenu.y, window.innerHeight - menuHeight - 8));
+
+    const items =
+      contextMenu.kind === "desktop"
+        ? [
+            {
+              label: "Ueber mich oeffnen",
+              action: () => navigateToWindow("about"),
+            },
+            {
+              label: "CV oeffnen",
+              action: () => navigateToWindow("cv"),
+            },
+            {
+              label: "Terminal oeffnen",
+              action: () => navigateToWindow("console"),
+            },
+            {
+              label: "Desktop aktualisieren",
+              action: () => setDialogMessage("Desktop erfolgreich aktualisiert. Nichts ist kaputt gegangen. ¯\\_(ツ)_/¯"),
+            },
+          ]
+        : [
+            {
+              label: `${contextMenu.target} nach vorne`,
+              action: () => navigateToWindow(contextMenu.target),
+            },
+            {
+              label: "Minimieren",
+              action: () => minimizeWindow(contextMenu.target),
+            },
+            {
+              label: "Schliessen",
+              action: () => closeWindow(contextMenu.target),
+            },
+          ];
+
+    return (
+      <div
+        className="retro-context-menu"
+        style={{ position: "fixed", top: `${top}px`, left: `${left}px` }}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {items.map((item) => (
+          <button
+            key={item.label}
+            type="button"
+            className="retro-context-item"
+            onClick={() => {
+              setContextMenu(null);
+              item.action();
+            }}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    );
+  }
+
   function handleConsoleCommand(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const command = consoleInput.trim().toLowerCase();
@@ -291,9 +490,21 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
     return (
       <section
         key={id}
+        id={id}
+        ref={(node) => {
+          windowRefs.current[id] = node;
+        }}
         className={`retro-window ${activeWindow === id ? "is-active" : "is-inactive"} ${isDesktop ? "is-floating" : "is-stacked"}`}
         style={isDesktop ? { top: position.top, left: position.left, width: position.width, zIndex } : { zIndex }}
         onMouseDown={() => focusWindow(id)}
+        onContextMenu={(event) =>
+          openContextMenu(event, {
+            kind: "window",
+            target: id,
+            x: event.clientX,
+            y: event.clientY,
+          })
+        }
       >
         <div className="retro-titlebar retro-titlebar-draggable" onPointerDown={(event) => handleTitlePointerDown(id, event)}>
           <span className="retro-title-icon">{icons[id]}</span>
@@ -394,7 +605,15 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
       className="retro-desktop"
       onClick={() => {
         if (activeMenu) setActiveMenu(null);
+        if (contextMenu) setContextMenu(null);
       }}
+      onContextMenu={(event) =>
+        openContextMenu(event, {
+          kind: "desktop",
+          x: event.clientX,
+          y: event.clientY,
+        })
+      }
     >
       <div className="retro-desktop-icons" aria-label="Desktop">
         {desktopEntries.map((item) => (
@@ -406,6 +625,13 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
               event.stopPropagation();
               openFromDesktop(item.id);
             }}
+            onContextMenu={(event) =>
+              openContextMenu(event, {
+                kind: "desktop",
+                x: event.clientX,
+                y: event.clientY,
+              })
+            }
           >
             <span className="retro-icon-emoji">{item.icon}</span>
             <span className="retro-icon-label">{item.label}</span>
@@ -415,7 +641,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
       <div
         className={`retro-desktop-canvas ${isDesktop ? "is-desktop" : "is-mobile"}`}
-        style={isDesktop ? { minHeight: desktopHeight } : undefined}
+        style={isDesktop ? { minHeight: "calc(100vh - 84px)" } : undefined}
       >
         {renderWindow(
           "about",
@@ -450,9 +676,9 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
             </div>
             <pre className="retro-ascii-banner">{asciiBanner}</pre>
             <div className="retro-badge-row">
-              <button type="button" className="retro-link-button" onClick={() => focusWindow("cv")}>
+              <Link href="#cv" className="retro-link-button" onClick={() => navigateToWindow("cv")}>
                 CV oeffnen
-              </button>
+              </Link>
               <Link href="mailto:danny@schapeit.com" className="retro-link-button">
                 Mail
               </Link>
@@ -677,6 +903,8 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
         </div>
       ) : null}
 
+      {renderContextMenu()}
+
       {startOpen ? (
         <div className="retro-start-menu">
           <div className="retro-start-menu-header">
@@ -690,7 +918,12 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
             {desktopEntries
               .filter((item) => item.id !== "recycle")
               .map((item) => (
-                <button key={item.id} type="button" className="retro-start-menu-item" onClick={() => openFromDesktop(item.id)}>
+                <button
+                  key={item.id}
+                  type="button"
+                  className="retro-start-menu-item"
+                  onClick={() => openFromDesktop(item.id)}
+                >
                   <span>{item.icon}</span>
                   <span>{item.label}</span>
                 </button>
@@ -705,7 +938,12 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
         </button>
         <div className="retro-taskbar-links">
           {taskbarItems.map((id) => (
-            <button key={id} type="button" className={`retro-taskbar-link ${activeWindow === id ? "is-active" : ""}`} onClick={() => focusWindow(id)}>
+            <button
+              key={id}
+              type="button"
+              className={`retro-taskbar-link ${activeWindow === id ? "is-active" : ""}`}
+              onClick={() => navigateToWindow(id)}
+            >
               {icons[id]} {id}
             </button>
           ))}

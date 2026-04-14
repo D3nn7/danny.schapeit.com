@@ -76,8 +76,10 @@ button {
 }
 
 .retro-desktop-icons {
+  position: relative;
+  z-index: 45;
   display: grid;
-  grid-template-columns: repeat(4, minmax(72px, 90px));
+  grid-template-columns: repeat(3, minmax(72px, 90px));
   gap: 10px;
   margin-bottom: 18px;
 }
@@ -88,6 +90,7 @@ button {
   align-items: stretch;
   gap: 12px;
   position: relative;
+  z-index: 10;
 }
 
 .retro-icon {
@@ -612,6 +615,37 @@ button {
   background: var(--window-face);
 }
 
+.retro-context-menu {
+  position: fixed;
+  z-index: 90;
+  min-width: 180px;
+  border: 2px solid;
+  border-color: var(--window-light) var(--window-shadow-dark) var(--window-shadow-dark) var(--window-light);
+  background: var(--window-face);
+  color: var(--text-main);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.retro-context-item {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 6px 12px;
+  text-align: left;
+  font-size: 12px;
+}
+
+.retro-context-item:hover,
+.retro-context-item:focus-visible {
+  background: #001a7a;
+  color: #fff;
+  outline: none;
+}
+
 .retro-dialog-text {
   margin: 0 0 12px;
   white-space: pre-wrap;
@@ -726,7 +760,14 @@ button {
 }
 
 @media (min-width: 900px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
   .retro-desktop {
+    overflow: hidden;
     padding: 16px 16px 68px;
   }
 
@@ -741,6 +782,8 @@ button {
 
   .retro-desktop-canvas {
     margin-left: 96px;
+    min-height: calc(100vh - 84px);
+    overflow: hidden;
   }
 
   .retro-about-main {
