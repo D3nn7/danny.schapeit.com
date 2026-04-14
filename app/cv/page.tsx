@@ -25,16 +25,16 @@ export default function CV() {
             Home <ChevronRightIcon className="w-6 h-6" />{" "}
           </Link>
         </div>
-        <h3 className="font-high-summit text-4xl text-silver">Resume</h3>
+        <h3 className="font-high-summit text-4xl text-silver">CV - Lebenslauf</h3>
         <p className="mt-2 text-gray-300">Danny Schapeit · danny@schapeit.com</p>
       </div>
 
-      <div className="rounded-lg border border-gray-700 bg-black/20 p-4">
+      <div>
         <h4 className="font-high-summit text-2xl text-silver">Profil</h4>
         <p className="mt-2 text-gray-300">
           Softwareentwickler mit Fokus auf Fullstack- und Mobile-Entwicklung.
           Erfahrung in der Konzeption und Weiterentwicklung produktiver
-          Anwendungen im Unternehmensumfeld – von Android Apps bis hin zu
+          Anwendungen im Unternehmensumfeld, von Android Apps bis hin zu
           skalierbaren Cloud- und Backend-Systemen.
         </p>
         <p className="mt-2 text-gray-300">
@@ -57,7 +57,7 @@ export default function CV() {
           <TimelineItem
             title="SPEDION GmbH"
             time="09/2020 - 07/2023"
-            extraInfos="Software Engineer"
+            extraInfos="Ausbildung für Fachinformatiker in Bereich Anwendungsentwicklung"
           />
           <TimelineItem
             title="SPEDION GmbH"
@@ -77,50 +77,38 @@ export default function CV() {
           <CodeBracketIcon className="h-6 w-6" />
           Ausgewählte Projekte
         </h4>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <div className="rounded-lg border border-gray-700 p-3">
-            <h5 className="text-lg font-semibold text-gray-200">SPEDION App Suite</h5>
-            <p className="text-gray-300">
-              Feature-Entwicklung, Bugfixing und UI-Verbesserungen inklusive Dark
-              Mode im produktiven Hauptprodukt.
-            </p>
-          </div>
-          <div className="rounded-lg border border-gray-700 p-3">
-            <h5 className="text-lg font-semibold text-gray-200">SPEDION Navigation</h5>
-            <p className="text-gray-300">
-              Mitentwicklung zentraler Komponenten sowie Blitzer- und
-              Benachrichtigungs-Engine auf Android.
-            </p>
-          </div>
-          <div className="rounded-lg border border-gray-700 p-3">
-            <h5 className="text-lg font-semibold text-gray-200">SPEDION DocScan</h5>
-            <p className="text-gray-300">
-              Entwicklung zentraler Features mit GeniusSDK und UI-Umsetzung via
-              Jetpack Compose.
-            </p>
-          </div>
-          <div className="rounded-lg border border-gray-700 p-3">
-            <h5 className="text-lg font-semibold text-gray-200">SPEDION SEPP</h5>
-            <p className="text-gray-300">
-              Monitoring-Oberfläche mit Next.js und C# API zur Visualisierung von
-              Nagios-Meldungen.
-            </p>
-          </div>
-          <div className="rounded-lg border border-gray-700 p-3">
-            <h5 className="text-lg font-semibold text-gray-200">Kubernetes & Cloud Infrastruktur</h5>
-            <p className="text-gray-300">
-              Aufbau eines Clusters im Team, GitOps mit ArgoCD, externes Kibana
-              Logging und Containerisierung von .NET 8 Anwendungen.
-            </p>
-          </div>
-          <div className="rounded-lg border border-gray-700 p-3">
-            <h5 className="text-lg font-semibold text-gray-200">Identity & Access Management</h5>
-            <p className="text-gray-300">
-              Migration auf Keycloak inklusive Anpassungen in Android, iOS,
-              Backend und Fallback-Mechanismus.
-            </p>
-          </div>
-        </div>
+        <ol className="relative mt-3 border-l border-gray-400 space-y-4">
+          <TimelineItem
+            title="SPEDION App Suite"
+            time="Android · Produktivsystem"
+            extraInfos="Feature-Entwicklung, Bugfixing und UI-Verbesserungen inklusive Dark Mode im Hauptprodukt."
+          />
+          <TimelineItem
+            title="SPEDION Navigation"
+            time="Android"
+            extraInfos="Mitentwicklung zentraler Komponenten sowie Blitzer- und Benachrichtigungs-Engine."
+          />
+          <TimelineItem
+            title="SPEDION DocScan"
+            time="Android · Jetpack Compose"
+            extraInfos="Entwicklung zentraler Features mit GeniusSDK und UI-Umsetzung via Compose."
+          />
+          <TimelineItem
+            title="SPEDION SEPP"
+            time="Next.js + C# API"
+            extraInfos="Monitoring-Oberfläche zur Visualisierung von Nagios-Meldungen."
+          />
+          <TimelineItem
+            title="Kubernetes & Cloud Infrastruktur"
+            time="Kubernetes · ArgoCD · Kibana"
+            extraInfos="Aufbau eines Clusters im Team, GitOps und Containerisierung von .NET 8 Anwendungen."
+          />
+          <TimelineItem
+            title="Identity & Access Management"
+            time="Keycloak Migration"
+            extraInfos="Anpassungen in Android, iOS und Backend inklusive Fallback-Mechanismus."
+          />
+        </ol>
       </div>
 
       <div>
@@ -200,7 +188,7 @@ export default function CV() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-gray-700 bg-black/20 p-4">
+      <div>
         <h4 className="font-high-summit text-2xl text-silver">Interessen</h4>
         <p className="mt-2 text-gray-300">
           Open Source · IT-Sicherheit · Privacy · Moderne Softwarearchitektur
