@@ -1,19 +1,26 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
+import type { FC } from "react";
+import type { OldIconProps } from "react-old-icons";
 import {
-  certifications,
-  contactLinks,
-  education,
-  experience,
-  interests,
-  languages,
-  profile,
-  projects,
-  skillGroups,
+  Windows95Help,
+  Windows95MonitorGraphic,
+  Windows95MyComputer,
+  Windows98WriteDocument,
+  WindowsAddressBook,
+  WindowsControl,
+  WindowsDos,
+  WindowsExplorer2,
+  WindowsOutlookExpress,
+  WindowsRecycleBin,
+} from "react-old-icons";
+import {
+  getPortfolioContent,
 } from "@/app/site-content";
+import { getAlternateLocale, type Locale } from "@/lib/i18n";
 
 type WindowId = "about" | "cv" | "skills" | "projects" | "console" | "guestbook" | "contact";
 type CvTab = "experience" | "education" | "certs";
@@ -31,6 +38,7 @@ type MenuAction =
   | { type: "dialog"; message: string };
 
 type DesktopPortfolioProps = {
+  locale: Locale;
   initialWindow?: WindowId;
 };
 
@@ -46,6 +54,8 @@ type ContextMenuState =
       x: number;
       y: number;
     };
+
+type RetroIconComponent = FC<OldIconProps>;
 
 const FLOATING_BREAKPOINT = 900;
 const WIDE_DESKTOP_BREAKPOINT = 1280;
@@ -70,32 +80,32 @@ const initialPositions: Record<WindowId, WindowPosition> = {
   contact: { top: 420, left: 540, width: 400 },
 };
 
-const icons: Record<WindowId, string> = {
-  about: "💻",
-  cv: "📄",
-  skills: "🔧",
-  projects: "📁",
-  console: "⬛",
-  guestbook: "📓",
-  contact: "📧",
+const icons: Record<WindowId, RetroIconComponent> = {
+  about: Windows95MyComputer,
+  cv: Windows98WriteDocument,
+  skills: WindowsControl,
+  projects: WindowsExplorer2,
+  console: WindowsDos,
+  guestbook: WindowsAddressBook,
+  contact: WindowsOutlookExpress,
 };
 
-const desktopEntries: Array<{ id: WindowId | "recycle"; label: string; icon: string }> = [
-  { id: "about", label: "Danny.exe", icon: "💻" },
-  { id: "cv", label: "CV.doc", icon: "📄" },
-  { id: "skills", label: "Skills.exe", icon: "🔧" },
-  { id: "projects", label: "Projekte", icon: "📁" },
-  { id: "console", label: "Terminal", icon: "⬛" },
-  { id: "guestbook", label: "Gaestebuch", icon: "📓" },
-  { id: "contact", label: "Kontakt", icon: "📧" },
-  { id: "recycle", label: "Papierkorb", icon: "🗑️" },
+const desktopEntries: Array<{ id: WindowId | "recycle"; label: string; icon: RetroIconComponent }> = [
+  { id: "about", label: "Danny.exe", icon: Windows95MyComputer },
+  { id: "cv", label: "CV.doc", icon: Windows98WriteDocument },
+  { id: "skills", label: "Skills.exe", icon: WindowsControl },
+  { id: "projects", label: "Projekte", icon: WindowsExplorer2 },
+  { id: "console", label: "Terminal", icon: WindowsDos },
+  { id: "guestbook", label: "Gaestebuch", icon: WindowsAddressBook },
+  { id: "contact", label: "Kontakt", icon: WindowsOutlookExpress },
+  { id: "recycle", label: "Papierkorb", icon: WindowsRecycleBin },
 ];
 
 const guestbookEntries = [
-  { author: "xXCodingMasterXx", date: "14.04.2026 09:42", text: "Coole Seite. Erinnert mich an GeoCities-Zeiten. Weiter so! (☞ﾟヮﾟ)☞" },
-  { author: "SwiftNinja2000", date: "13.04.2026 16:20", text: "Endlich versteht jemand, dass Xcode der wahre Endgegner ist. (╥_╥)" },
-  { author: "HomelabHero", date: "12.04.2026 23:15", text: "Tailscale + Docker = Liebe. Gruesse aus dem Serverraum! ┗(°0°)┛" },
-  { author: "RetroWebDev", date: "10.04.2026 11:33", text: "Endlich eine Seite, die nicht aussieht wie jede andere. ¯\\_(ツ)_/¯" },
+  { author: "xXCodingMasterXx", date: "14.04.2026 09:42", text: "Coole Seite. Erinnert mich an GeoCities-Zeiten. Weiter so! (â˜žï¾Ÿãƒ®ï¾Ÿ)â˜ž" },
+  { author: "SwiftNinja2000", date: "13.04.2026 16:20", text: "Endlich versteht jemand, dass Xcode der wahre Endgegner ist. (â•¥_â•¥)" },
+  { author: "HomelabHero", date: "12.04.2026 23:15", text: "Tailscale + Docker = Liebe. Gruesse aus dem Serverraum! â”—(Â°0Â°)â”›" },
+  { author: "RetroWebDev", date: "10.04.2026 11:33", text: "Endlich eine Seite, die nicht aussieht wie jede andere. Â¯\\_(ãƒ„)_/Â¯" },
 ];
 
 const clippyMessages = [
@@ -113,7 +123,33 @@ const asciiBanner = String.raw`
                          |___/                        |_|
 `;
 
-export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPortfolioProps) {
+export default function DesktopPortfolio({ locale, initialWindow = "about" }: DesktopPortfolioProps) {
+  const {
+    asciiBanner,
+    certifications,
+    clippyMessages,
+    contactLinks,
+    education,
+    experience,
+    guestbookEntries,
+    interests,
+    languages,
+    profile,
+    projects,
+    skillGroups,
+    ui,
+  } = getPortfolioContent(locale);
+  const alternateLocale = getAlternateLocale(locale);
+  const desktopEntries = [
+    { id: "about" as const, label: ui.desktopLabels.about, icon: Windows95MyComputer },
+    { id: "cv" as const, label: ui.desktopLabels.cv, icon: Windows98WriteDocument },
+    { id: "skills" as const, label: ui.desktopLabels.skills, icon: WindowsControl },
+    { id: "projects" as const, label: ui.desktopLabels.projects, icon: WindowsExplorer2 },
+    { id: "console" as const, label: ui.desktopLabels.console, icon: WindowsDos },
+    { id: "guestbook" as const, label: ui.desktopLabels.guestbook, icon: WindowsAddressBook },
+    { id: "contact" as const, label: ui.desktopLabels.contact, icon: WindowsOutlookExpress },
+    { id: "recycle" as const, label: ui.desktopLabels.recycle, icon: WindowsRecycleBin },
+  ];
   const windowRefs = useRef<Partial<Record<WindowId, HTMLElement | null>>>({});
   const [windows, setWindows] = useState(initialWindows);
   const [positions, setPositions] = useState(initialPositions);
@@ -125,15 +161,16 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
   const [activeCvTab, setActiveCvTab] = useState<CvTab>("experience");
   const [consoleInput, setConsoleInput] = useState("");
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
-  const [consoleLines, setConsoleLines] = useState<string[]>([
-    "Microsoft Windows [Version 98.2026]",
-    "(c) Danny Schapeit. Keine Rechte vorbehalten. ¯\\_(ツ)_/¯",
-    "",
-    "Verfuegbare Befehle: help, about, skills, contact, coffee, matrix, clear, exit",
-  ]);
+  const [consoleLines, setConsoleLines] = useState<string[]>(ui.consoleBoot);
   const [clippyIndex, setClippyIndex] = useState(0);
   const [clippyVisible, setClippyVisible] = useState(true);
   const [layoutMode, setLayoutMode] = useState<LayoutMode>("stacked");
+  const [clockTime, setClockTime] = useState(() =>
+    new Intl.DateTimeFormat(locale === "de" ? "de-DE" : "en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date()),
+  );
   const isDesktop = layoutMode !== "stacked";
   const isCompactDesktop = layoutMode === "compact";
 
@@ -324,17 +361,17 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
   useEffect(() => {
     console.clear();
-    console.log("╔══════════════════════════════════════════════════════╗");
-    console.log("║   Du hast die Konsole gefunden. Ein Mensch Kultur.  ║");
-    console.log("║   Versuch mal: help, coffee oder danny.hire()       ║");
-    console.log("╚══════════════════════════════════════════════════════╝");
-    console.log("¯\\_(ツ)_/¯");
+    console.log("â•”â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•—");
+    console.log("â•‘   Du hast die Konsole gefunden. Ein Mensch Kultur.  â•‘");
+    console.log("â•‘   Versuch mal: help, coffee oder danny.hire()       â•‘");
+    console.log("â•šâ•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•");
+    console.log("Â¯\\_(ãƒ„)_/Â¯");
     (window as Window & { danny?: Record<string, () => void> }).danny = {
-      hire: () => console.log("Kontakt: danny@schapeit.com"),
-      coffee: () => console.log("Kaffee-Modus aktiv."),
-      secret: () => console.log("ASCII-Einhorn freigeschaltet: /)  (\\\\"),
+      hire: () => console.log(contactLinks[0]?.value ?? "danny@schapeit.com"),
+      coffee: () => console.log(ui.consoleResponses.coffee[0]),
+      secret: () => console.log("ASCII unicorn unlocked: /)  (\\\\"),
     };
-  }, []);
+  }, [contactLinks, ui.consoleResponses.coffee]);
 
   useEffect(() => {
     if (!clippyVisible) return;
@@ -343,6 +380,21 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
     }, 6000);
     return () => window.clearTimeout(timer);
   }, [clippyIndex, clippyVisible]);
+
+  useEffect(() => {
+    const formatter = new Intl.DateTimeFormat(locale === "de" ? "de-DE" : "en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const tick = () => {
+      setClockTime(formatter.format(new Date()));
+    };
+
+    tick();
+    const interval = window.setInterval(tick, 1000);
+    return () => window.clearInterval(interval);
+  }, [locale]);
 
   const taskbarItems = useMemo(() => windowOrder.filter((id) => windows[id].open), [windowOrder, windows]);
 
@@ -365,7 +417,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
   function openFromDesktop(id: WindowId | "recycle") {
     if (id === "recycle") {
-      setDialogMessage("Papierkorb-Inhalt:\n- alte-portfolio-v1.html\n- node_modules/ (unloeschbar)\n\n¯\\_(ツ)_/¯");
+      setDialogMessage(ui.recycleMessage);
       return;
     }
     focusWindow(id);
@@ -466,33 +518,33 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
       contextMenu.kind === "desktop"
         ? [
             {
-              label: "Ueber mich oeffnen",
+              label: ui.contextMenu.openAbout,
               action: () => navigateToWindow("about"),
             },
             {
-              label: "CV oeffnen",
+              label: ui.contextMenu.openCv,
               action: () => navigateToWindow("cv"),
             },
             {
-              label: "Terminal oeffnen",
+              label: ui.contextMenu.openTerminal,
               action: () => navigateToWindow("console"),
             },
             {
-              label: "Desktop aktualisieren",
-              action: () => setDialogMessage("Desktop erfolgreich aktualisiert. Nichts ist kaputt gegangen. ¯\\_(ツ)_/¯"),
+              label: ui.contextMenu.refreshDesktop,
+              action: () => setDialogMessage(ui.contextMenu.desktopRefreshed),
             },
           ]
         : [
             {
-              label: `${contextMenu.target} nach vorne`,
+              label: ui.contextMenu.bringToFront(contextMenu.target),
               action: () => navigateToWindow(contextMenu.target),
             },
             {
-              label: "Minimieren",
+              label: ui.contextMenu.minimize,
               action: () => minimizeWindow(contextMenu.target),
             },
             {
-              label: "Schliessen",
+              label: ui.contextMenu.close,
               action: () => closeWindow(contextMenu.target),
             },
           ];
@@ -525,12 +577,12 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
     const command = consoleInput.trim().toLowerCase();
     if (!command) return;
     const commands: Record<string, string[]> = {
-      help: ["help - Hilfe", "about - Kurzprofil", "skills - Technologien", "contact - Kontakt", "coffee - Kaffee", "matrix - ASCII", "clear - Leeren", "exit - Minimieren"],
-      about: [profile.name, `${profile.role} bei ${profile.company}`, "Fokus: Android, Fullstack, Security, Privacy, Architektur"],
+      help: ui.consoleHelp,
+      about: [profile.name, `${profile.role} · ${profile.company}`, profile.focus],
       skills: skillGroups.flatMap((group) => [group.title, ...group.items.map((item) => `${item.name}: ${item.level}%`)]),
       contact: contactLinks.map((item) => `${item.label}: ${item.value}`),
-      coffee: ["  ( (", "   ) )", "........", "| Kaffee|]", "\\      /", " `----'"],
-      matrix: ["01000100 01100001 01101110 01101110 01111001", "wake up, developer..."],
+      coffee: ["  ( (", "   ) )", "........", "| coffee|]", "\\      /", " `----'"],
+      matrix: ui.consoleResponses.matrix,
     };
     if (command === "clear") {
       setConsoleLines([]);
@@ -538,27 +590,27 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
       return;
     }
     if (command === "exit") {
-      appendConsoleOutput(command, ["Terminal wird minimiert..."]);
+      appendConsoleOutput(command, [ui.consoleExit]);
       setConsoleInput("");
       minimizeWindow("console");
       return;
     }
-    appendConsoleOutput(command, commands[command] ?? [`'${command}' ist kein gueltiger Befehl.`]);
+    appendConsoleOutput(command, commands[command] ?? [ui.consoleUnknown(command)]);
     setConsoleInput("");
   }
 
   function renderWindowMenu(windowId: WindowId, menu: string) {
     const actions: Record<string, MenuAction[]> = {
       datei: [{ type: "minimize", target: windowId }, { type: "close", target: windowId }],
-      bearbeiten: [{ type: "copy", value: "danny@schapeit.com", message: "E-Mail kopiert." }, { type: "dialog", message: "Bearbeiten.exe ist dekorativ. ¯\\_(ツ)_/¯" }],
+      bearbeiten: [{ type: "copy", value: "danny@schapeit.com", message: ui.menuActionMessages.mailCopied }, { type: "dialog", message: ui.menuActionMessages.editDecorative }],
       ansicht: [{ type: "focus", target: "about" }, { type: "focus", target: "projects" }],
-      hilfe: [{ type: "dialog", message: "Retro-Hilfe: Fenster sind klickbar, verschiebbar und per Taskbar fokussierbar." }],
-      format: [{ type: "dialog", message: "Formatierung erfolgreich geprueft. 800x600 approved." }],
+      hilfe: [{ type: "dialog", message: ui.menuActionMessages.retroHelp }],
+      format: [{ type: "dialog", message: ui.menuActionMessages.formattingChecked }],
       extras: [{ type: "focus", target: "console" }, { type: "link", href: "https://dev.to/d3nn7" }],
-      einfuegen: [{ type: "dialog", message: "Noch nichts zum Einfuegen. Vielleicht spaeter ein Floppy-Import." }],
-      optionen: [{ type: "dialog", message: "Optionen geoeffnet: Mehr CRT, mehr Bevel, mehr Y2K." }],
+      einfuegen: [{ type: "dialog", message: ui.menuActionMessages.pasteEmpty }],
+      optionen: [{ type: "dialog", message: ui.menuActionMessages.optionsOpened }],
     };
-    return actions[menu.toLowerCase()] ?? [{ type: "dialog", message: `${menu} ist gerade nur nostalgisch.` }];
+    return actions[menu.toLowerCase()] ?? [{ type: "dialog", message: `${menu} is decorative.` }];
   }
 
   function renderWindow(id: WindowId, title: string, menu: string[], status: string, content: React.ReactNode) {
@@ -587,13 +639,18 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
         }
       >
         <div className="retro-titlebar retro-titlebar-draggable" onPointerDown={(event) => handleTitlePointerDown(id, event)}>
-          <span className="retro-title-icon">{icons[id]}</span>
+          <span className="retro-title-icon">
+            {(() => {
+              const WindowIcon = icons[id];
+              return <WindowIcon size={16} alt={id} className="retro-title-icon-art" />;
+            })()}
+          </span>
           <h2 className="retro-title">{title}</h2>
           <div className="retro-controls" onPointerDown={(event) => event.stopPropagation()}>
             <button
               type="button"
               className="retro-control"
-              aria-label="Minimieren"
+              aria-label={ui.contextMenu.minimize}
               onClick={(event) => {
                 event.stopPropagation();
                 minimizeWindow(id);
@@ -604,10 +661,10 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
             <button
               type="button"
               className="retro-control"
-              aria-label="Maximieren"
+              aria-label={locale === "de" ? "Maximieren" : "Maximize"}
               onClick={(event) => {
                 event.stopPropagation();
-                setDialogMessage("Maximieren folgt in Build 98.2026.");
+                setDialogMessage(ui.menuActionMessages.maximizeLater);
               }}
             >
               □
@@ -615,7 +672,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
             <button
               type="button"
               className="retro-control retro-control-close"
-              aria-label="Schliessen"
+              aria-label={ui.contextMenu.close}
               onClick={(event) => {
                 event.stopPropagation();
                 closeWindow(id);
@@ -657,12 +714,12 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
                         void runMenuAction(action);
                       }}
                     >
-                      {action.type === "focus" && `Fenster ${action.target}`}
-                      {action.type === "minimize" && "Minimieren"}
-                      {action.type === "close" && "Schliessen"}
-                      {action.type === "link" && "Externen Link oeffnen"}
-                      {action.type === "copy" && "E-Mail kopieren"}
-                      {action.type === "dialog" && "Info anzeigen"}
+                      {action.type === "focus" && ui.menuActionLabels.focusWindow(action.target)}
+                      {action.type === "minimize" && ui.menuActionLabels.minimize}
+                      {action.type === "close" && ui.menuActionLabels.close}
+                      {action.type === "link" && ui.menuActionLabels.openExternal}
+                      {action.type === "copy" && ui.menuActionLabels.copyEmail}
+                      {action.type === "dialog" && ui.menuActionLabels.showInfo}
                     </button>
                   ))}
                 </div>
@@ -713,7 +770,9 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
               })
             }
           >
-            <span className="retro-icon-emoji">{item.icon}</span>
+            <span className="retro-icon-emoji">
+              <item.icon size={32} alt={item.label} className="retro-desktop-icon-art" />
+            </span>
             <span className="retro-icon-label">{item.label}</span>
           </button>
         ))}
@@ -725,13 +784,13 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
       >
         {renderWindow(
           "about",
-          "Danny Schapeit - Systemeigenschaften",
-          ["Datei", "Bearbeiten", "Ansicht", "Hilfe"],
-          "Bereit",
+          ui.windowTitles.about,
+          [ui.menus.file, ui.menus.edit, ui.menus.view, ui.menus.help],
+          ui.windowStatus.about,
           <div className="retro-about-layout">
             <div className="retro-about-main">
               <div className="retro-photo-frame">
-                <div className="retro-avatar">👨‍💻</div>
+                <div className="retro-avatar"><Windows95MonitorGraphic size={92} alt={profile.name} className="retro-avatar-icon" /></div>
               </div>
               <div>
                 <h1 className="retro-heading">{profile.name}</h1>
@@ -750,20 +809,20 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
               </div>
             </div>
             <div className="retro-construction">
-              <span>*** under construction ***</span>
-              <span>beste Ansicht: Desktop und Mobile</span>
-              <span>Besucher Nr. 031337</span>
+              <span>{ui.about.underConstruction}</span>
+              <span>{ui.about.bestView}</span>
+              <span>{ui.about.visitorCount}</span>
             </div>
             <pre className="retro-ascii-banner">{asciiBanner}</pre>
             <div className="retro-badge-row">
               <Link href="#cv" className="retro-link-button" onClick={() => navigateToWindow("cv")}>
-                CV oeffnen
+                {ui.about.openCv}
               </Link>
               <Link href="mailto:danny@schapeit.com" className="retro-link-button">
-                Mail
+                {ui.about.mail}
               </Link>
               <Link href="https://dev.to/d3nn7" target="_blank" rel="noreferrer" className="retro-link-button">
-                Blog
+                {ui.about.blog}
               </Link>
             </div>
           </div>,
@@ -771,14 +830,14 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
         {renderWindow(
           "cv",
-          "CV.doc - Microsoft Word 98",
-          ["Datei", "Bearbeiten", "Format", "Einfuegen"],
-          "Seite 1 von 1",
+          ui.windowTitles.cv,
+          [ui.menus.file, ui.menus.edit, ui.menus.format, ui.menus.insert],
+          ui.windowStatus.cv,
           <div>
             <div className="retro-tabbar">
-              <button type="button" className={`retro-tab ${activeCvTab === "experience" ? "is-active" : ""}`} onClick={() => setActiveCvTab("experience")}>Erfahrung</button>
-              <button type="button" className={`retro-tab ${activeCvTab === "education" ? "is-active" : ""}`} onClick={() => setActiveCvTab("education")}>Ausbildung</button>
-              <button type="button" className={`retro-tab ${activeCvTab === "certs" ? "is-active" : ""}`} onClick={() => setActiveCvTab("certs")}>Zertifikate</button>
+              <button type="button" className={`retro-tab ${activeCvTab === "experience" ? "is-active" : ""}`} onClick={() => setActiveCvTab("experience")}>{ui.cvTabs.experience}</button>
+              <button type="button" className={`retro-tab ${activeCvTab === "education" ? "is-active" : ""}`} onClick={() => setActiveCvTab("education")}>{ui.cvTabs.education}</button>
+              <button type="button" className={`retro-tab ${activeCvTab === "certs" ? "is-active" : ""}`} onClick={() => setActiveCvTab("certs")}>{ui.cvTabs.certs}</button>
             </div>
             {activeCvTab === "experience" ? (
               <div className="retro-list">
@@ -820,9 +879,9 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
         {renderWindow(
           "skills",
-          "Skills.exe - Systemsteuerung",
-          ["Datei", "Ansicht", "Extras"],
-          "Skills geladen",
+          ui.windowTitles.skills,
+          [ui.menus.file, ui.menus.view, ui.menus.extras],
+          ui.windowStatus.skills,
           <div className="retro-list">
             {skillGroups.map((group) => (
               <section key={group.title} className="retro-skill-group">
@@ -845,9 +904,9 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
         {renderWindow(
           "projects",
-          "C:\\Projekte - Windows Explorer",
-          ["Datei", "Bearbeiten", "Ansicht", "Extras"],
-          `${projects.length} Objekte`,
+          ui.windowTitles.projects,
+          [ui.menus.file, ui.menus.edit, ui.menus.view, ui.menus.extras],
+          ui.projectsCount(projects.length),
           <div className="retro-list">
             {projects.map((project) => (
               <article key={project.title} className="retro-card">
@@ -861,9 +920,9 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
         {renderWindow(
           "console",
-          "C:\\WINDOWS\\system32\\cmd.exe",
-          ["Datei", "Bearbeiten", "Ansicht", "Hilfe"],
-          "Console bereit",
+          ui.windowTitles.console,
+          [ui.menus.file, ui.menus.edit, ui.menus.view, ui.menus.help],
+          ui.windowStatus.console,
           <div className="retro-console">
             <div className="retro-console-output">
               {consoleLines.map((line, index) => (
@@ -885,9 +944,9 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
         {renderWindow(
           "guestbook",
-          "Gaestebuch - Internet Explorer 5.0",
-          ["Datei", "Bearbeiten", "Ansicht"],
-          `${guestbookEntries.length} Eintraege`,
+          ui.windowTitles.guestbook,
+          [ui.menus.file, ui.menus.edit, ui.menus.view],
+          ui.guestbookCount(guestbookEntries.length),
           <div className="retro-list">
             {guestbookEntries.map((entry) => (
               <article key={`${entry.author}-${entry.date}`} className="retro-card">
@@ -903,9 +962,9 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
         {renderWindow(
           "contact",
-          "Kontakt - Outlook Express",
-          ["Datei", "Bearbeiten", "Hilfe"],
-          "Online (wahrscheinlich)",
+          ui.windowTitles.contact,
+          [ui.menus.file, ui.menus.edit, ui.menus.help],
+          ui.windowStatus.contact,
           <div className="retro-list">
             <div className="retro-card">
               {contactLinks.map((item) => (
@@ -923,7 +982,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
               ))}
             </div>
             <div className="retro-card">
-              <h3>Sprachen</h3>
+              <h3>{ui.contact.languages}</h3>
               <div className="retro-doc-list" style={{ marginTop: "0.75rem" }}>
                 {languages.map((item) => (
                   <p key={item.name} className="retro-body" style={{ marginTop: 0 }}>
@@ -933,7 +992,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
               </div>
             </div>
             <div className="retro-card">
-              <h3>Interessen</h3>
+              <h3>{ui.contact.interests}</h3>
               <p className="retro-body">{interests.join(" · ")}</p>
             </div>
           </div>,
@@ -954,7 +1013,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
             onClick={() => setClippyIndex((current) => (current + 1) % clippyMessages.length)}
           >
             <span className="retro-clippy-pin-bg" />
-            <span className="retro-clippy-pin-icon">📎</span>
+            <span className="retro-clippy-pin-icon"><Windows95Help size={40} alt="Hilfe" className="retro-clippy-pin-art" /></span>
           </button>
         </div>
       ) : null}
@@ -963,8 +1022,8 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
         <div className="retro-dialog-overlay" onClick={() => setDialogMessage(null)}>
           <div className="retro-dialog" onClick={(event) => event.stopPropagation()}>
             <div className="retro-titlebar">
-              <span className="retro-title-icon">!</span>
-              <h2 className="retro-title">Systemmeldung</h2>
+              <span className="retro-title-icon"><Windows95Help size={16} alt={ui.systemMessage} className="retro-title-icon-art" /></span>
+              <h2 className="retro-title">{ui.systemMessage}</h2>
               <div className="retro-controls">
                 <button type="button" className="retro-control retro-control-close" onClick={() => setDialogMessage(null)}>
                   ×
@@ -991,7 +1050,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
             <div className="retro-start-menu-avatar">D</div>
             <div>
               <strong>Danny Schapeit</strong>
-              <div>Portfolio 98.2026</div>
+              <div>{ui.startMenuTitle}</div>
             </div>
           </div>
           <div className="retro-start-menu-body">
@@ -1004,7 +1063,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
                   className="retro-start-menu-item"
                   onClick={() => openFromDesktop(item.id)}
                 >
-                  <span>{item.icon}</span>
+                  <span className="retro-start-menu-item-icon"><item.icon size={20} alt={item.label} className="retro-start-menu-item-art" /></span>
                   <span>{item.label}</span>
                 </button>
               ))}
@@ -1014,7 +1073,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
       <footer className="retro-taskbar">
         <button type="button" className="retro-start" onClick={() => setStartOpen((current) => !current)}>
-          Start
+          {ui.start}
         </button>
         <div className="retro-taskbar-links">
           {taskbarItems.map((id) => (
@@ -1024,12 +1083,36 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
               className={`retro-taskbar-link ${activeWindow === id ? "is-active" : ""}`}
               onClick={() => navigateToWindow(id)}
             >
-              {icons[id]} {id}
+              {(() => {
+                const TaskbarIcon = icons[id];
+                return <>
+                  <span className="retro-taskbar-link-icon"><TaskbarIcon size={16} alt={id} className="retro-taskbar-link-art" /></span>{id}
+                </>;
+              })()}
             </button>
           ))}
         </div>
-        <span className="retro-clock">14:44</span>
+        <Link href={ui.quickLinksPath} className="retro-taskbar-link retro-taskbar-link-compact">
+          {ui.quickLinksLabel}
+        </Link>
+        <Link
+          href={ui.switchPath}
+          className="retro-taskbar-link retro-taskbar-link-compact"
+          title={ui.switchLocale === "DE" ? "Deutsch" : "English"}
+          aria-label={ui.switchLocale === "DE" ? "Auf Deutsch wechseln" : "Switch to English"}
+        >
+          {ui.switchLocale}
+        </Link>
+        <span className="retro-clock">{clockTime}</span>
       </footer>
     </main>
   );
 }
+
+
+
+
+
+
+
+
