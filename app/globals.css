@@ -70,9 +70,32 @@ button {
 }
 
 .retro-desktop {
+  --desktop-icon-size: 28px;
+  --desktop-icon-font: 11px;
+  --desktop-icon-min-height: 82px;
+  --window-title-size: 26px;
+  --window-control-size: 21px;
+  --window-menu-font: 12px;
+  --window-content-pad: 10px;
+  --window-status-font: 11px;
+  --window-body-font: 14px;
+  --window-kicker-size: 20px;
   position: relative;
   min-height: 100vh;
   padding: 16px 12px 68px;
+}
+
+.retro-desktop.is-compact {
+  --desktop-icon-size: 24px;
+  --desktop-icon-font: 10px;
+  --desktop-icon-min-height: 72px;
+  --window-title-size: 20px;
+  --window-control-size: 18px;
+  --window-menu-font: 11px;
+  --window-content-pad: 8px;
+  --window-status-font: 10px;
+  --window-body-font: 13px;
+  --window-kicker-size: 18px;
 }
 
 .retro-desktop-icons {
@@ -95,7 +118,7 @@ button {
 
 .retro-icon {
   display: flex;
-  min-height: 82px;
+  min-height: var(--desktop-icon-min-height);
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -116,12 +139,12 @@ button {
 }
 
 .retro-icon-emoji {
-  font-size: 28px;
+  font-size: var(--desktop-icon-size);
   line-height: 1;
 }
 
 .retro-icon-label {
-  font-size: 11px;
+  font-size: var(--desktop-icon-font);
   word-break: break-word;
 }
 
@@ -182,7 +205,7 @@ button {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-family: var(--font-pixel), monospace;
-  font-size: 26px;
+  font-size: var(--window-title-size);
   letter-spacing: 0.04em;
 }
 
@@ -193,8 +216,8 @@ button {
 
 .retro-control {
   display: inline-flex;
-  width: 21px;
-  height: 21px;
+  width: var(--window-control-size);
+  height: var(--window-control-size);
   align-items: center;
   justify-content: center;
   border: 1px solid;
@@ -239,7 +262,7 @@ button {
   border: 0;
   background: transparent;
   padding: 2px 8px;
-  font-size: 12px;
+  font-size: var(--window-menu-font);
   color: var(--text-main);
 }
 
@@ -273,7 +296,8 @@ button {
 }
 
 .retro-content {
-  padding: 10px;
+  padding: var(--window-content-pad);
+  font-size: var(--window-body-font);
 }
 
 .retro-statusbar {
@@ -283,7 +307,7 @@ button {
   border-top: 1px solid var(--window-shadow);
   padding: 4px 8px;
   color: var(--text-subtle);
-  font-size: 11px;
+  font-size: var(--window-status-font);
 }
 
 .retro-heading,
@@ -303,13 +327,13 @@ button {
 .retro-kicker {
   margin: 0 0 6px;
   color: #001a7a;
-  font-size: 20px;
+  font-size: var(--window-kicker-size);
 }
 
 .retro-subheading {
   margin: 6px 0 0;
   color: var(--text-subtle);
-  font-size: 14px;
+  font-size: var(--window-body-font);
 }
 
 .retro-copy {
@@ -771,6 +795,10 @@ button {
     padding: 16px 16px 68px;
   }
 
+  .retro-desktop.is-compact {
+    padding: 12px 12px 68px;
+  }
+
   .retro-desktop-icons {
     position: fixed;
     top: 16px;
@@ -780,14 +808,69 @@ button {
     margin-bottom: 0;
   }
 
+  .retro-desktop.is-compact .retro-desktop-icons {
+    top: 12px;
+    left: 12px;
+    width: 72px;
+    gap: 8px;
+  }
+
   .retro-desktop-canvas {
     margin-left: 96px;
     min-height: calc(100vh - 84px);
     overflow: hidden;
   }
 
+  .retro-desktop-canvas.is-compact {
+    margin-left: 84px;
+  }
+
   .retro-about-main {
     grid-template-columns: 210px minmax(0, 1fr);
     align-items: start;
+  }
+
+  .retro-window.is-compact .retro-titlebar {
+    padding: 2px 2px 2px 3px;
+  }
+
+  .retro-window.is-compact .retro-controls {
+    gap: 1px;
+  }
+
+  .retro-window.is-compact .retro-menubar {
+    padding: 2px 3px;
+  }
+
+  .retro-window.is-compact .retro-statusbar {
+    gap: 8px;
+    padding: 3px 6px;
+  }
+
+  .retro-window.is-compact .retro-about-main {
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .retro-window.is-compact .retro-photo-frame {
+    width: min(100%, 170px);
+  }
+
+  .retro-window.is-compact .retro-avatar {
+    min-height: 140px;
+    font-size: 40px;
+  }
+
+  .retro-window.is-compact .retro-heading {
+    font-size: clamp(28px, 4vw, 40px);
+  }
+
+  .retro-window.is-compact .retro-copy {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .retro-window.is-compact .retro-ascii-banner {
+    display: none;
   }
 }

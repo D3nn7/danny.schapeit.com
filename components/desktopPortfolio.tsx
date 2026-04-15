@@ -20,6 +20,7 @@ type CvTab = "experience" | "education" | "certs";
 
 type WindowState = { open: boolean; minimized: boolean };
 type WindowPosition = { top: number; left: number; width: number };
+type LayoutMode = "stacked" | "compact" | "wide";
 
 type MenuAction =
   | { type: "focus"; target: WindowId }
@@ -46,7 +47,8 @@ type ContextMenuState =
       y: number;
     };
 
-const DESKTOP_BREAKPOINT = 900;
+const FLOATING_BREAKPOINT = 900;
+const WIDE_DESKTOP_BREAKPOINT = 1280;
 
 const initialWindows: Record<WindowId, WindowState> = {
   about: { open: true, minimized: false },
@@ -131,24 +133,107 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
   ]);
   const [clippyIndex, setClippyIndex] = useState(0);
   const [clippyVisible, setClippyVisible] = useState(true);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>("stacked");
+  const isDesktop = layoutMode !== "stacked";
+  const isCompactDesktop = layoutMode === "compact";
 
   useEffect(() => {
-    const syncViewport = () => setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
+    const syncViewport = () => {
+      const width = window.innerWidth;
+
+      if (width >= WIDE_DESKTOP_BREAKPOINT) {
+        setLayoutMode("wide");
+        return;
+      }
+
+      if (width >= FLOATING_BREAKPOINT) {
+        setLayoutMode("compact");
+        return;
+      }
+
+      setLayoutMode("stacked");
+    };
+
     syncViewport();
     window.addEventListener("resize", syncViewport);
     return () => window.removeEventListener("resize", syncViewport);
   }, []);
 
   useEffect(() => {
-    if (!isDesktop) {
+    if (layoutMode === "stacked") {
       return;
     }
 
     const distributeWindows = () => {
-      const desktopLeftOffset = 120;
-      const availableWidth = Math.max(window.innerWidth - desktopLeftOffset - 32, 900);
-      const availableHeight = Math.max(window.innerHeight - 120, 620);
+      const compactLayout = layoutMode === "compact" || window.innerHeight < 860;
+      const desktopLeftOffset = compactLayout ? 96 : 120;
+      const horizontalInset = compactLayout ? 24 : 32;
+      const availableWidth = Math.max(window.innerWidth - desktopLeftOffset - horizontalInset, 320);
+      const availableHeight = Math.max(window.innerHeight - (compactLayout ? 108 : 120), 420);
+      const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+      const clampWidth = (value: number, min: number, max: number) => clamp(Math.round(value), min, Math.min(max, availableWidth));
+
+      const clampLeft = (left: number, width: number) =>
+        Math.max(0, Math.min(left, Math.max(availableWidth - width, 0)));
+      const clampTop = (top: number, height = 320) =>
+        Math.max(0, Math.min(top, Math.max(availableHeight - height, 0)));
+
+      if (compactLayout) {
+        const leftCol = 0;
+        const rightCol = Math.round(availableWidth * 0.48);
+        const topRow = 0;
+        const upperMidRow = Math.round(availableHeight * 0.16);
+        const middleRow = Math.round(availableHeight * 0.42);
+        const lowerMidRow = Math.round(availableHeight * 0.54);
+        const lowerRow = Math.round(availableHeight * 0.68);
+        const aboutWidth = clampWidth(availableWidth * 0.42, 320, 430);
+        const cvWidth = clampWidth(availableWidth * 0.49, 360, 540);
+        const skillsWidth = clampWidth(availableWidth * 0.29, 240, 300);
+        const projectsWidth = clampWidth(availableWidth * 0.43, 320, 450);
+        const consoleWidth = clampWidth(availableWidth * 0.3, 250, 320);
+        const guestbookWidth = clampWidth(availableWidth * 0.3, 250, 310);
+        const contactWidth = clampWidth(availableWidth * 0.33, 260, 340);
+
+        setPositions({
+          about: {
+            width: aboutWidth,
+            left: clampLeft(leftCol, aboutWidth),
+            top: clampTop(topRow, 330),
+          },
+          cv: {
+            width: cvWidth,
+            left: clampLeft(rightCol, cvWidth),
+            top: clampTop(upperMidRow, 400),
+          },
+          skills: {
+            width: skillsWidth,
+            left: clampLeft(leftCol + 20, skillsWidth),
+            top: clampTop(middleRow, 280),
+          },
+          projects: {
+            width: projectsWidth,
+            left: clampLeft(rightCol - 28, projectsWidth),
+            top: clampTop(lowerMidRow, 320),
+          },
+          console: {
+            width: consoleWidth,
+            left: clampLeft(rightCol + Math.round(availableWidth * 0.16), consoleWidth),
+            top: clampTop(topRow + 18, 280),
+          },
+          guestbook: {
+            width: guestbookWidth,
+            left: clampLeft(leftCol + Math.round(availableWidth * 0.14), guestbookWidth),
+            top: clampTop(lowerRow, 280),
+          },
+          contact: {
+            width: contactWidth,
+            left: clampLeft(rightCol + Math.round(availableWidth * 0.08), contactWidth),
+            top: clampTop(lowerRow + 12, 300),
+          },
+        });
+        return;
+      }
+
       const leftEdge = Math.round(availableWidth * 0.01);
       const centerLane = Math.round(availableWidth * 0.37);
       const rightLane = Math.round(availableWidth * 0.73);
@@ -156,18 +241,13 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
       const middleRow = Math.round(availableHeight * 0.34);
       const lowerRow = Math.round(availableHeight * 0.63);
 
-      const clampLeft = (left: number, width: number) =>
-        Math.max(0, Math.min(left, Math.max(availableWidth - width, 0)));
-      const clampTop = (top: number, height = 320) =>
-        Math.max(0, Math.min(top, Math.max(availableHeight - height, 0)));
-
-      const aboutWidth = Math.min(500, Math.max(400, Math.round(availableWidth * 0.28)));
-      const cvWidth = Math.min(520, Math.max(430, Math.round(availableWidth * 0.3)));
-      const skillsWidth = Math.min(350, Math.max(300, Math.round(availableWidth * 0.2)));
-      const projectsWidth = Math.min(430, Math.max(340, Math.round(availableWidth * 0.25)));
-      const consoleWidth = Math.min(360, Math.max(300, Math.round(availableWidth * 0.21)));
-      const guestbookWidth = Math.min(350, Math.max(290, Math.round(availableWidth * 0.2)));
-      const contactWidth = Math.min(390, Math.max(320, Math.round(availableWidth * 0.22)));
+      const aboutWidth = clampWidth(availableWidth * 0.28, 400, 500);
+      const cvWidth = clampWidth(availableWidth * 0.3, 430, 520);
+      const skillsWidth = clampWidth(availableWidth * 0.2, 300, 350);
+      const projectsWidth = clampWidth(availableWidth * 0.25, 340, 430);
+      const consoleWidth = clampWidth(availableWidth * 0.21, 300, 360);
+      const guestbookWidth = clampWidth(availableWidth * 0.2, 290, 350);
+      const contactWidth = clampWidth(availableWidth * 0.22, 320, 390);
 
       setPositions({
         about: {
@@ -211,7 +291,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
     distributeWindows();
     window.addEventListener("resize", distributeWindows);
     return () => window.removeEventListener("resize", distributeWindows);
-  }, [isDesktop]);
+  }, [layoutMode]);
 
   useEffect(() => {
     focusWindow(initialWindow);
@@ -494,7 +574,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
         ref={(node) => {
           windowRefs.current[id] = node;
         }}
-        className={`retro-window ${activeWindow === id ? "is-active" : "is-inactive"} ${isDesktop ? "is-floating" : "is-stacked"}`}
+        className={`retro-window ${activeWindow === id ? "is-active" : "is-inactive"} ${isDesktop ? "is-floating" : "is-stacked"} ${isCompactDesktop ? "is-compact" : ""}`}
         style={isDesktop ? { top: position.top, left: position.left, width: position.width, zIndex } : { zIndex }}
         onMouseDown={() => focusWindow(id)}
         onContextMenu={(event) =>
@@ -602,7 +682,7 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
 
   return (
     <main
-      className="retro-desktop"
+      className={`retro-desktop ${isCompactDesktop ? "is-compact" : ""}`}
       onClick={() => {
         if (activeMenu) setActiveMenu(null);
         if (contextMenu) setContextMenu(null);
@@ -640,8 +720,8 @@ export default function DesktopPortfolio({ initialWindow = "about" }: DesktopPor
       </div>
 
       <div
-        className={`retro-desktop-canvas ${isDesktop ? "is-desktop" : "is-mobile"}`}
-        style={isDesktop ? { minHeight: "calc(100vh - 84px)" } : undefined}
+        className={`retro-desktop-canvas ${isDesktop ? "is-desktop" : "is-mobile"} ${isCompactDesktop ? "is-compact" : ""}`}
+        style={isDesktop ? { minHeight: "calc(100dvh - 84px)" } : undefined}
       >
         {renderWindow(
           "about",
