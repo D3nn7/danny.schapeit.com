@@ -1,14 +1,10 @@
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
-import Link from "next/link";
+import { headers } from "next/headers";
+import Solitaire404 from "@/components/solitaire404";
+import { defaultLocale, isLocale } from "@/lib/i18n";
 
-export default function NotFound() {
-    return (
-      <main>
-        <h1 className="text-2xl font-bold">¯\(ツ)/¯</h1>
-        <p>Hier ist wohl nix..</p>
-        <div className='mb-6 flex justify-center'>
-            <Link href={'/'} className='flex hover:underline'>Home <ChevronRightIcon className='w-6 h-6' /> </Link>
-        </div>
-      </main>
-    )
-  }
+export default async function NotFound() {
+  const localeHeader = (await headers()).get("x-locale") ?? defaultLocale;
+  const locale = isLocale(localeHeader) ? localeHeader : defaultLocale;
+
+  return <Solitaire404 locale={locale} />;
+}

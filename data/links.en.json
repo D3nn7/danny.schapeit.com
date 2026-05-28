@@ -1,0 +1,72 @@
+{
+  "profile": {
+    "name": "Danny Schapeit",
+    "tagline": "Software engineer for Android, full-stack, and durable systems",
+    "status": "online",
+    "location": "Germany",
+    "email": "danny@schapeit.com",
+    "homeUrl": "https://danny.schapeit.com/en"
+  },
+  "links": [
+    {
+      "id": "email",
+      "title": "Email",
+      "href": "mailto:danny@schapeit.com",
+      "label": "danny@schapeit.com",
+      "description": "Direct contact for projects, jobs, and conversations.",
+      "icon": "mail",
+      "accent": "gold",
+      "featured": true
+    },
+    {
+      "id": "github",
+      "title": "GitHub",
+      "href": "https://github.com/d3nn7",
+      "label": "@d3nn7",
+      "description": "Code, experiments, and open-source projects.",
+      "icon": "github",
+      "accent": "blue",
+      "featured": true
+    },
+    {
+      "id": "linkedin",
+      "title": "LinkedIn",
+      "href": "https://www.linkedin.com/in/danny-schapeit-a23b5a232",
+      "label": "View profile",
+      "description": "Professional context, experience, and network.",
+      "icon": "linkedin",
+      "accent": "cyan",
+      "featured": true
+    },
+    {
+      "id": "devto",
+      "title": "Dev.to",
+      "href": "https://dev.to/d3nn7",
+      "label": "@d3nn7",
+      "description": "Posts, learnings, and technical notes.",
+      "icon": "devto",
+      "accent": "rose",
+      "featured": false
+    },
+    {
+      "id": "instagram",
+      "title": "Instagram",
+      "href": "https://instagram.com/glaubedanny",
+      "label": "@glaubedanny",
+      "description": "Personal channel and occasional glimpses.",
+      "icon": "instagram",
+      "accent": "violet",
+      "featured": false
+    },
+    {
+      "id": "portfolio",
+      "title": "Portfolio",
+      "href": "https://danny.schapeit.com/en",
+      "label": "Open desktop site",
+      "description": "The full desktop version with CV, projects, and contact.",
+      "icon": "home",
+      "accent": "green",
+      "featured": false
+    }
+  ]
+}
